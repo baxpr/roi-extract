@@ -29,6 +29,7 @@ hurst=../INPUTS/hurst_v1/HURST/hurst.nii.gz
 # Resample image to native ROI geom
 tfm=../INPUTS/fmriprep_v24/fmriprepBIDS/sub-200007109/ses-242539/anat/sub-200007109_ses-242539_from-MNI152NLin2009cAsym_to-T1w_mode-image_xfm.h5
 
+
 antsApplyTransforms \
     -i "${hurst}" \
     -r "${out_dir}/rois.nii.gz" \
@@ -41,20 +42,10 @@ antsApplyTransforms \
     --tgt_niigz "${out_dir}"/resampled_hurst.nii.gz \
     --roi_niigz "${out_dir}"/rois.nii.gz \
     --roilabels_csv "${out_dir}"/rois-labels.csv \
-    --output_csv "${out_dir}"/rois-values.csv
+    --output_csv "${out_dir}"/rois-values.csv \
+    --value_label Hurst
 
 
-
-
-# Resample ROI to MNI func geom (loses resolution on ROI)
-#tfm=../INPUTS/fmriprep_v24/fmriprepBIDS/sub-200007109/ses-242539/anat/sub-200007109_ses-242539_from-T1w_to-MNI152NLin2009cAsym_mode-image_xfm.h5
-#
-#antsApplyTransforms \
-#    -i "${out_dir}/rois.nii.gz" \
-#    -r "${hurst}" \
-#    -t "${tfm}" \
-#    -n NearestNeighbor \
-#    -o "${out_dir}"/resampled_rois.nii.gz
 
 
 # Seg fault for some reason
