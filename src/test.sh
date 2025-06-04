@@ -36,15 +36,14 @@ antsApplyTransforms \
     -n Linear \
     -o "${out_dir}"/resampled_hurst.nii.gz
 
-# Extract (depends on quirky fslstats behavior)
-# FIXME Need to add ROI labels here
-IFS=$'\n' stats=($(fslstats -K "${out_dir}/rois-test.nii.gz" "${out_dir}/resampled_hurst.nii.gz" -m))
-echo "Label,Value" > results.csv
-let c=0
-for x in "${stats[@]}"; do
-    let c++
-    echo "${c},${x}" >> results.csv
-done
+# Extract
+./extract-rois.py \
+    --tgt_niigz "${out_dir}"/resampled_hurst.nii.gz \
+    --roi_niigz "${out_dir}"/rois.nii.gz \
+    --roilabels_csv "${out_dir}"/rois-labels.csv \
+    --output_csv "${out_dir}"/rois-values.csv
+
+
 
 
 # Resample ROI to MNI func geom (loses resolution on ROI)
