@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+export PATH=$(pwd):$PATH
+
+hurst-hippocampus.sh \
+    --roi_dir ../INPUTS/ASLROIS/ROIS \
+    --img_niigz ../INPUTS/hurst_v1/HURST/hurst.nii.gz \
+    --fmriprep_dir ../INPUTS/fmriprep_v24/fmriprepBIDS \
+    --out_dir ../OUTPUTS
+
+
+
 out_dir=../OUTPUTS
 
 # Combine ASLROIS ROI images
