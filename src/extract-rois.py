@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# FIXME  TBSS container has ants, fsl but not nilearn. Refactor to use nibabel / numpy?
+
 import argparse
 import nibabel
 import nilearn
