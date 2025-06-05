@@ -37,16 +37,16 @@ if affine_diff != 0:
 tgt_data = tgt_img.get_fdata()
 roi_data = roi_img.get_fdata()
 
-# Find unique non-zero ROI labels
-roivals = numpy.ndarray.tolist(numpy.int32(numpy.unique(numpy.round(roi_data))))
+# Find unique non-zero ROI labels and verify vs Label in ROI csv
+roivals = sorted(numpy.int32(numpy.unique(numpy.round(roi_data))))
 roivals.remove(0)
 print(f'Found {len(roivals)} unique ROI labels in {args.roi_niigz} :')
 print(roivals)
 
-# FIXME Check roi image vals vs label csv
-info_vals = numpy.int32(roi_info.Label).sort()
+infovals = sorted(roi_info.Label.values)
+if not roivals==infovals:
+    raise Exception('Mismatch of ROI labels between image and info csv')
 
-print(info_vals)
 sys.exit(0)
 
 #for roival in roivals:
