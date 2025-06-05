@@ -45,16 +45,14 @@ if not roivals==infovals:
     raise Exception('Mismatch of ROI labels between image and info csv')
 
 
-#for roival in roivals:
-    # FIXME find voxels and get mean
-    # https://numpy.org/devdocs//user/basics.indexing.html#boolean-array-indexing
+for roival in roivals:
+    roi_info.loc[roi_info.Label.values==roival, args.value_label] = (
+        numpy.mean(tgt_data[roi_data==roival])
+        )
+    
+print(roi_info)
+
+roi_info.to_csv(args.output_csv, index=False)
 
 # FIXME compute coverage for each ROI? Needs mask
-
-# Previous method with nilearn
-#masker = nilearn.maskers.NiftiLabelsMasker(args.roi_niigz)
-#img = nibabel.load(args.tgt_niigz)
-#vals = masker.fit_transform(img)
-#roi_info[args.value_label] = [x[0] for x in numpy.transpose(vals).tolist()]
-#roi_info.to_csv(args.output_csv, index=False)
 
