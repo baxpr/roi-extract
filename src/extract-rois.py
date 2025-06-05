@@ -44,7 +44,6 @@ infovals = sorted(roi_info.Label.values)
 if not roivals==infovals:
     raise Exception('Mismatch of ROI labels between image and info csv')
 
-sys.exit(0)
 
 #for roival in roivals:
     # FIXME find voxels and get mean
