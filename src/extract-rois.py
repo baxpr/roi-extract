@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-# FIXME  TBSS container has ants, fsl but not nilearn. Refactor to use nibabel / numpy?
-# https://numpy.org/devdocs//user/basics.indexing.html#boolean-array-indexing
-
 import argparse
 import nibabel
 import nilearn
@@ -51,6 +48,7 @@ sys.exit(0)
 
 #for roival in roivals:
     # FIXME find voxels and get mean
+    # https://numpy.org/devdocs//user/basics.indexing.html#boolean-array-indexing
 
 # FIXME compute coverage for each ROI? Needs mask
 
