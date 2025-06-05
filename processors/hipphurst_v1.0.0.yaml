@@ -1,0 +1,68 @@
+---
+procyamlversion: 3.0.0-dev.0
+
+description: Hurst exponent ROI extraction for hippocampus, https://github.com/baxpr/roi-extract
+
+containers:
+  - name: tbss
+    path: tbss-enigma_v1.0.1.sif
+    source: docker://baxterprogers/tbss-enigma:v1.0.1
+
+requirements:
+  walltime: 0-12
+  memory: 8000
+
+jobtemplate: job_template_v3.txt
+
+inputs:
+  xnat:
+      
+    filters:
+      - type: match
+        inputs: scan_fmri,assr_fmriprep/scan_fmri,assr_hurst/scan_fmri
+
+    scans:
+
+      - name: scan_fmri
+        types: Resting state
+        skip_unusable: True
+
+    assessors:
+        
+        - name: assr_hurst
+          proctypes: hurst_v1
+          resources:
+            - {resource: HURST, ftype: FILE, fdest: hurst.nii.gz}
+
+        - name: assr_fmriprep
+          proctypes: fmriprep_v24
+          resources:
+            - {resource: fmriprepBIDS, ftype: DIR, fdest: fmriprepBIDS}
+
+        - name: assr_rois
+          proctypes: ASLROIS
+          resources:
+            - {resource: ROIS, ftype: DIR, fdest: ASLROIS}
+
+    attrs:
+      - {varname: project, object: assessor, attr: project}
+      - {varname: subject, object: session, attr: subject_label}
+      - {varname: session, object: session, attr: label}
+      - {varname: scan, object: scan, attr: ID, ref: scan_fmri}
+      
+command: 
+  type: singularity_exec
+  container: tbss
+  args: >-
+    bash -c '
+    cd /INPUTS &&
+    curl -o roi-extract.tar.gz -L https://github.com/baxpr/roi-extract/archive/refs/tags/v1.0.0.tar.gz &&
+    tar -zxf roi-extract.tar.gz &&
+    export PATH=/INPUTS/roi-extract-1.0.0/src:\\\$PATH &&
+    xwrapper.sh hurst-hippocampus.sh
+      --roi_dir /INPUTS/ASLROIS
+      --img_niiz /INPUTS/hurst.nii.gz
+      --fmriprep_dir /INPUTS/fmriprepBIDS/fmriprepBIDS
+      --out_dir /OUTPUTS
+      --label_info "{project} {subject} {session} {scan}"
+    '
