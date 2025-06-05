@@ -2,8 +2,6 @@
 
 import argparse
 import nibabel
-import nilearn
-from nilearn import masking, maskers
 import numpy
 import os
 import pandas
