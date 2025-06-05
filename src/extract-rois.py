@@ -53,6 +53,3 @@ for roival in roivals:
 print(roi_info)
 
 roi_info.to_csv(args.output_csv, index=False)
-
-# FIXME compute coverage for each ROI? Needs mask
-
