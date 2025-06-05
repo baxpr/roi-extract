@@ -2,6 +2,17 @@
 
 export PATH=$(pwd):$PATH
 
+
+extract-rois.py \
+    --tgt_niigz ../OUTPUTS/resampled-hurst.nii.gz \
+    --roi_niigz ../OUTPUTS/rois.nii.gz \
+    --roilabels_csv ../OUTPUTS/rois-labels.csv \
+    --output_csv ../OUTPUTS/rois-values.csv \
+    --value_label Hurst
+
+exit 0
+
+
 hurst-hippocampus.sh \
     --roi_dir ../INPUTS/ASLROIS/ROIS \
     --img_niigz ../INPUTS/hurst_v1/HURST/hurst.nii.gz \
