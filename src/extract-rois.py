@@ -21,13 +21,28 @@ args = parser.parse_args()
 
 roi_info = pandas.read_csv(args.roilabels_csv)
 
-masker = nilearn.maskers.NiftiLabelsMasker(args.roi_niigz)
+tgt_img = nibabel.load(args.tgt_niigz)
+roi_img = nibabel.load(args.roi_niigz)
 
-img = nibabel.load(args.tgt_niigz)
+# FIXME Verify matching geometry, 3D images
 
-vals = masker.fit_transform(img)
+tgt_data = tgt_img.get_fdata()
+roi_data = roi_img.get_fdata()
 
-roi_info[args.value_label] = [x[0] for x in numpy.transpose(vals).tolist()]
+roivals = numpy.unique(roi_data)
+print(f'Found {len(roivals)} unique ROI labels in {args.roi_niigz}')
 
-roi_info.to_csv(args.output_csv, index=False)
+# FIXME Check roi image vals vs label csv
+
+for roival in roivals:
+    # FIXME find voxels and get mean
+
+# FIXME compute coverage for each ROI? Needs mask
+
+# Previous method with nilearn
+#masker = nilearn.maskers.NiftiLabelsMasker(args.roi_niigz)
+#img = nibabel.load(args.tgt_niigz)
+#vals = masker.fit_transform(img)
+#roi_info[args.value_label] = [x[0] for x in numpy.transpose(vals).tolist()]
+#roi_info.to_csv(args.output_csv, index=False)
 
