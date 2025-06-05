@@ -43,9 +43,11 @@ roivals.remove(0)
 print(f'Found {len(roivals)} unique ROI labels in {args.roi_niigz} :')
 print(roivals)
 
-sys.exit(0)
-
 # FIXME Check roi image vals vs label csv
+info_vals = numpy.int32(roi_info.Label).sort()
+
+print(info_vals)
+sys.exit(0)
 
 #for roival in roivals:
     # FIXME find voxels and get mean
