@@ -69,7 +69,7 @@ command:
     cd /INPUTS &&
     curl -o roi-extract.tar.gz -L https://github.com/baxpr/roi-extract/archive/refs/tags/v1.0.0.tar.gz &&
     tar -zxf roi-extract.tar.gz &&
-    export PATH=/INPUTS/roi-extract-1.0.0/src:\\\$PATH &&
+    export PATH=/INPUTS/roi-extract-1.0.0/src:\$PATH &&
     xwrapper.sh hurst-hippocampus.sh
       --roi_dir /INPUTS/ASLROIS
       --img_niiz /INPUTS/hurst.nii.gz
