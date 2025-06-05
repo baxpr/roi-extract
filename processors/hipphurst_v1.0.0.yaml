@@ -19,7 +19,11 @@ inputs:
       
     filters:
       - type: match
-        inputs: scan_fmri,assr_fmriprep/scan_fmri,assr_hurst/scan_fmri
+        inputs: scan_fmri,assr_fmriprep/scan_fmri
+      - type: match
+        inputs: scan_fmri,assr_hurst/scan_fmri
+      - type: match
+        inputs: assr_fmriprep/scan_fmri,assr_hurst/scan_fmri
 
     scans:
 
@@ -49,6 +53,13 @@ inputs:
       - {varname: subject, object: session, attr: subject_label}
       - {varname: session, object: session, attr: label}
       - {varname: scan, object: scan, attr: ID, ref: scan_fmri}
+     
+outputs:
+  - {path: hurst-extract.pdf, type: FILE, resource: PDF}    
+  - {path: ROIS, type: FILE, resource: rois.nii.gz}
+  - {path: ROIS, type: FILE, resource: rois-labels.nii.gz}
+  - {path: STATS, type: FILE, resource: rois-values.nii.gz}
+
       
 command: 
   type: singularity_exec
