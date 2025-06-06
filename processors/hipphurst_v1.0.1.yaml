@@ -55,10 +55,10 @@ inputs:
       - {varname: scan, object: scan, attr: ID, ref: scan_fmri}
      
 outputs:
-  - {path: hurst-extract.pdf, type: FILE, resource: PDF}    
-  - {path: ROIS, type: FILE, resource: rois.nii.gz}
-  - {path: ROIS, type: FILE, resource: rois-labels.nii.gz}
-  - {path: STATS, type: FILE, resource: rois-values.nii.gz}
+  - {path: hurst-extract.pdf, type: FILE, resource: PDF}
+  - {path: rois.nii.gz, type: FILE, resource: ROIS}
+  - {path: rois-labels.csv, type: FILE, resource: ROIS}
+  - {path: rois-values.csv, type: FILE, resource: STATS}
 
       
 command: 
