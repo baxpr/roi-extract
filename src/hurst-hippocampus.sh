@@ -19,10 +19,10 @@ done
 cd "${out_dir}"
 
 # Create ROI image and label index from provided single ROI images
-fslmaths "${roi_dir}"/lh.hippoAmygLabels-T1.v21.HBT.FSvoxelSpace_ant.nii.gz -mul 1 tmp1
-fslmaths "${roi_dir}"/rh.hippoAmygLabels-T1.v21.HBT.FSvoxelSpace_ant.nii.gz -mul 2 tmp2
-fslmaths "${roi_dir}"/lh.hippoAmygLabels-T1.v21.HBT.FSvoxelSpace_post.nii.gz -mul 3 tmp3
-fslmaths "${roi_dir}"/rh.hippoAmygLabels-T1.v21.HBT.FSvoxelSpace_post.nii.gz -mul 4 tmp4
+fslmaths "${roi_dir}"/lh.hippoAmygLabels-T1.v21.HBT.FSvoxelSpace_ant.nii.gz -bin -mul 1 tmp1
+fslmaths "${roi_dir}"/rh.hippoAmygLabels-T1.v21.HBT.FSvoxelSpace_ant.nii.gz -bin -mul 2 tmp2
+fslmaths "${roi_dir}"/lh.hippoAmygLabels-T1.v21.HBT.FSvoxelSpace_post.nii.gz -bin -mul 3 tmp3
+fslmaths "${roi_dir}"/rh.hippoAmygLabels-T1.v21.HBT.FSvoxelSpace_post.nii.gz -bin -mul 4 tmp4
 fslmaths tmp1 -add tmp2 -add tmp3 -add tmp4 rois
 rm -f tmp?.nii.gz
 cat << EOF > rois-labels.csv
