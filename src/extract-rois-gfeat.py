@@ -42,13 +42,16 @@ label_file = os.path.join(label_file, atlas_str + '_dseg.tsv')
 cope_dirs = glob.glob(os.path.join(args.gfeat_dir, 'cope*.feat'))
 
 # Process each cope
-for cope_dir in cope_dirs[0:1]:
+allvals = ''
+for cope_dir in cope_dirs:
+
+    # Get contrast number
+    con_num = int(os.path.basename(cope_dir).split('cope')[1].split('.feat')[0])
 
     # Get contrast name
     lev_file = os.path.join(cope_dir, 'design.lev')
     with open(lev_file, 'rt') as lev:
         con_name = lev.read().strip()
-    print(con_name)
 
     # Extract values
     masker = nilearn.maskers.NiftiLabelsMasker(
@@ -60,10 +63,9 @@ for cope_dir in cope_dirs[0:1]:
     
     # Assume 1D array of extracted ROI values
     vals = vals.tolist()[0]
-    
-    #print(vals)
-    #print(masker.labels_)
     vals = pandas.DataFrame({
+        'connum': con_num,
+        'conname': con_name,
         'index': masker.labels_,
         'value': vals,
         })
@@ -71,10 +73,14 @@ for cope_dir in cope_dirs[0:1]:
     # Add ROI labels and merge
     labels = pandas.read_csv(label_file, delimiter='\t')
     vals = vals.merge(labels, on='index', how='outer')
-    
-    print(vals)
-    
+        
     # Reorganize with region as column name and add cope name column
-    
-    # Combine the above rows across all copes - need to check/verify matching column names
+    vals = vals.pivot(index=['connum','conname'], columns='label', values='value')
+    if not isinstance(allvals, pandas.DataFrame):
+        allvals = vals
+    else:
+        allvals = pandas.concat([allvals, vals])
 
+allvals = allvals.sort_values('connum')
+
+print(allvals)
