@@ -64,8 +64,8 @@ for cope_dir in cope_dirs:
     # Assume 1D array of extracted ROI values
     vals = vals.tolist()[0]
     vals = pandas.DataFrame({
-        'connum': con_num,
-        'conname': con_name,
+        'copenum': con_num,
+        'copename': con_name,
         'index': masker.labels_,
         'value': vals,
         })
