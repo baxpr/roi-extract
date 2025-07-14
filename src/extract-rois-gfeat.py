@@ -75,12 +75,12 @@ for cope_dir in cope_dirs:
     vals = vals.merge(labels, on='index', how='outer')
         
     # Reorganize with region as column name and add cope name column
-    vals = vals.pivot(index=['connum','conname'], columns='label', values='value')
+    vals = vals.pivot(index=['copenum','copename'], columns='label', values='value')
     if not isinstance(allvals, pandas.DataFrame):
         allvals = vals
     else:
         allvals = pandas.concat([allvals, vals])
 
-allvals = allvals.sort_values('connum')
+allvals = allvals.sort_values('copenum')
 
 print(allvals)
