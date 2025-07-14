@@ -32,11 +32,12 @@
 # Convert mm coords to voxel indices for the 1mm standard brain 
 #   ${FSLDIR}/data/standard/MNI152_T1_1mm.nii.gz
 # https://jiscmail.ac.uk/cgi-bin/webadmin?A2=FSL;ac19295e.0710
+x=`echo "$1 * -1 + 90" | bc`
+y=`echo "$2 * 1 + 126" | bc`
+z=`echo "$3 * 1 + 72" | bc`
 
 fslmaths ${FSLDIR}/data/standard/MNI152_T1_1mm.nii.gz \
     -mul 0 -add 1 -roi 131 1 142 1 126 1 0 1 \
     -kernel sphere 6 -dilM \
     sphere6mm_MNI_-41_+16_+54
 
-# Label file
-cat 
