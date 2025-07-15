@@ -26,8 +26,7 @@ import sys
 parser = argparse.ArgumentParser()
 parser.add_argument('--gfeat_dir', required=True)
 parser.add_argument('--roi_niigz', required=True)
-#parser.add_argument('--roilabels_tsv', required=True)
-#parser.add_argument('--output_csv', required=True)
+parser.add_argument('--out_dir', required=True)
 args = parser.parse_args()
 
 # Load ROI image
@@ -80,7 +79,8 @@ for cope_dir in cope_dirs:
         allvals = vals
     else:
         allvals = pandas.concat([allvals, vals])
-
+    
 allvals = allvals.sort_values('copenum')
 
-print(allvals)
+allvals.to_csv(os.path.join(args.out_dir), 'roidata.csv')
+
