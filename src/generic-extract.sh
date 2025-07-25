@@ -36,9 +36,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 
-# Find ROI image and labels
+# Find ROI image
 roi_dir=$(dirname "${BASH_SOURCE[0]}")/../rois
-export roi_tsv=$(echo "${roi_niigz}" | cut -d'_' -f1)
-roi_tsv="${roi_dir}"/"${roi_tsv}_dseg.tsv"
 roi_niigz="${roi_dir}"/"${roi_niigz}"
 
