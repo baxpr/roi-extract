@@ -21,6 +21,7 @@ import nilearn.maskers
 import numpy
 import os
 import pandas
+import shutil
 import sys
 
 parser = argparse.ArgumentParser()
@@ -37,6 +38,12 @@ mask_img = nibabel.load(os.path.join(args.gfeat_dir, 'mask.nii.gz'))
 label_file = os.path.dirname(args.roi_niigz)
 atlas_str = os.path.basename(args.roi_niigz).split('_')[0]
 label_file = os.path.join(label_file, atlas_str + '_dseg.tsv')
+
+# Copy ROI info to output dir to store with outputs
+roi_dir = os.path.join(args.out_dir, 'ROIS')
+os.makedirs(roi_dir, exist_ok=True)
+shutil.copy(args.roi_niigz, roi_dir)
+shutil.copy(label_file, roi_dir)
 
 # Find cope dirs in gfeat dir
 cope_dirs = glob.glob(os.path.join(args.gfeat_dir, 'cope*.feat'))
