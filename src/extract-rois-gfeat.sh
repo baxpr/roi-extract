@@ -24,10 +24,14 @@ cd "${out_dir}"
 
 # Extract ROI means
 src_dir=$(dirname "${BASH_SOURCE[0]}")
-extract-rois-gfeat.py \
+"${src_dir}"/extract-rois-gfeat.py \
     --gfeat_dir "${gfeat_dir}" \
-    --roi_niigz "${src_dir}"/../rois/atlas-GFWM11_space-MNI152NLin6Asym_res-01_dseg.nii.gz \
+    --roi_niigz "${src_dir}"/../rois/"${roi_fname}" \
     --out_dir "${out_dir}"
+
+exit 0
+
+
 
 # PDF showing T1, ROIs, and image in register
 IFS=$'\n' coms=($(fslstats -K rois rois -c))

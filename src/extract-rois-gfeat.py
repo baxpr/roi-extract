@@ -29,8 +29,9 @@ parser.add_argument('--roi_niigz', required=True)
 parser.add_argument('--out_dir', required=True)
 args = parser.parse_args()
 
-# Load ROI image
+# Load ROI image and mask
 roi_img = nibabel.load(args.roi_niigz)
+mask_img = nibabel.load(os.path.join(args.gfeat_dir, 'mask.nii.gz'))
 
 # Find and load index/label
 label_file = os.path.dirname(args.roi_niigz)
@@ -55,9 +56,9 @@ for cope_dir in cope_dirs:
     # Extract values
     masker = nilearn.maskers.NiftiLabelsMasker(
         labels_img=roi_img, 
+        mask_img=mask_img,
         resampling_target='labels',
         )
-    #masker.fit(os.path.join(cope_dir, 'stats', 'cope1.nii.gz'))
     vals = masker.fit_transform(os.path.join(cope_dir, 'stats', 'cope1.nii.gz'))
     
     # Assume 1D array of extracted ROI values
@@ -82,5 +83,5 @@ for cope_dir in cope_dirs:
     
 allvals = allvals.sort_values('copenum')
 
-allvals.to_csv(os.path.join(args.out_dir), 'roidata.csv')
+allvals.to_csv(os.path.join(args.out_dir, 'roidata.csv'))
 
