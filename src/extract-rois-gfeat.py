@@ -81,6 +81,7 @@ for cope_dir in cope_dirs:
     else:
         allvals = pandas.concat([allvals, vals])
     
+allvals['roi_file'] = os.path.basename(args.roi_niigz)
 allvals = allvals.sort_values('copenum')
 
 allvals.to_csv(os.path.join(args.out_dir, 'roidata.csv'))

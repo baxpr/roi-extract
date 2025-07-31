@@ -11,77 +11,84 @@ while [[ $# -gt 0 ]]; do
         --roi_fname)      export roi_fname="$2";      shift; shift ;;
         --gfeat_dir)      export gfeat_dir="$2";      shift; shift ;;
         --out_dir)        export out_dir="$2";        shift; shift ;;
+        --label_info)     export label_info="$2";     shift; shift ;;
         *) echo "Input ${1} not recognized"; shift ;;
     esac
 done
 
-# FIXME Find some files
-meanfmri_niigz=
-
+# Find ROI file
+src_dir=$(dirname "${BASH_SOURCE[0]}")
+roi_niigz="${src_dir}"/../rois/"${roi_fname}"
 
 # Work in output dir
 cd "${out_dir}"
 
 # Extract ROI means
-src_dir=$(dirname "${BASH_SOURCE[0]}")
 "${src_dir}"/extract-rois-gfeat.py \
     --gfeat_dir "${gfeat_dir}" \
-    --roi_niigz "${src_dir}"/../rois/"${roi_fname}" \
+    --roi_niigz "${roi_niigz}" \
     --out_dir "${out_dir}"
-
-exit 0
-
 
 
 # PDF showing T1, ROIs, and image in register
-IFS=$'\n' coms=($(fslstats -K rois rois -c))
+
+# Location of first ROI
+IFS=$'\n' coms=($(fslstats -K "${roi_niigz}" "${roi_niigz}" -c))
 
 IFS=' ' loc=(${coms[0]})
-# FIXME Get a standard T1 here
+
+# On standard T1
 fsleyes render -of t1_1.png \
-    --scene ortho --worldLoc ${loc[@]} --hidey --hidez \
-    --displaySpace world --size 600 600 \
+    --scene ortho --worldLoc ${loc[0]} ${loc[1]} ${loc[2]} -xc 0 0 -yc 0 0 -zc 0 0 \
+    --displaySpace world --size 1800 600 \
     --hideCursor \
-    "${t1}" -dr 0 99% \
-    rois -ot label -l harvard-oxford-cortical -w 0
+    "${FSLDIR}"/data/standard/MNI152_T1_1mm -dr 0 99% \
+    "${roi_niigz}" -ot label -l harvard-oxford-cortical -o \
+    "${gfeat_dir}"/mask -ot mask -o 
 
-# FIXME meanfmri not hurst
-fsleyes render -of hurst_1.png \
-    --scene ortho --worldLoc ${loc[@]} --hidey --hidez \
-    --displaySpace world --size 600 600 \
+# On mean func
+fsleyes render -of func_1.png \
+    --scene ortho --worldLoc ${loc[0]} ${loc[1]} ${loc[2]} -xc 0 0 -yc 0 0 -zc 0 0 \
+    --displaySpace world --size 1800 600 \
     --hideCursor \
-    "${t1}" -dr 0 99% \
-    resampled-hurst -dr 0 99% \
-    rois -ot label -l harvard-oxford-cortical -w 0
+    "${gfeat_dir}"/mean_func -dr 0 99% \
+    "${roi_niigz}" -ot label -l harvard-oxford-cortical -o \
+    "${gfeat_dir}"/mask -ot mask -o 
 
-# FIXME add fmri mask over std T1
 
-# FIXME show more than 1 roi?
+# Show second ROI
 IFS=' ' loc=(${coms[1]})
 fsleyes render -of t1_2.png \
-    --scene ortho --worldLoc ${loc[@]} --hidey --hidez \
-    --displaySpace world --size 600 600 \
+    --scene ortho --worldLoc ${loc[0]} ${loc[1]} ${loc[2]} -xc 0 0 -yc 0 0 -zc 0 0 \
+    --displaySpace world --size 1800 600 \
     --hideCursor \
-    "${t1}" -dr 0 99% \
-    rois -ot label -l harvard-oxford-cortical -w 0
+    "${FSLDIR}"/data/standard/MNI152_T1_1mm -dr 0 99% \
+    "${roi_niigz}" -ot label -l harvard-oxford-cortical -o \
+    "${gfeat_dir}"/mask -ot mask -o 
 
-fsleyes render -of hurst_2.png \
-    --scene ortho --worldLoc ${loc[@]} --hidey --hidez \
-    --displaySpace world --size 600 600 \
+fsleyes render -of func_2.png \
+    --scene ortho --worldLoc ${loc[0]} ${loc[1]} ${loc[2]} -xc 0 0 -yc 0 0 -zc 0 0 \
+    --displaySpace world --size 1800 600 \
     --hideCursor \
-    "${t1}" -dr 0 99% \
-    resampled-hurst -dr 0 99% \
-    rois -ot label -l harvard-oxford-cortical -w 0
+    "${gfeat_dir}"/mean_func -dr 0 99% \
+    "${roi_niigz}" -ot label -l harvard-oxford-cortical -o \
+    "${gfeat_dir}"/mask -ot mask -o 
 
 montage \
-    -mode concatenate t1_1.png hurst_1.png t1_2.png hurst_2.png \
-    -tile 2x2 -quality 100 -background black -gravity center \
+    -mode concatenate t1_1.png func_1.png t1_2.png func_2.png \
+    -tile 1x4 -quality 100 -background black -gravity center \
     -border 0 -bordercolor black reg.png
 
 convert -size 2600x3365 xc:white \
     -gravity center \( reg.png -resize 2400x2800 \) -composite \
-    -gravity North -pointsize 40 -font "Nimbus-Sans" -annotate +0+100 \
+    -gravity North -pointsize 40 -annotate +0+100 \
         "${label_info}" \
-    -gravity SouthEast -pointsize 40 -font "Nimbus-Sans" -annotate +100+100 "$(date)" \
-    hurst-extract.pdf
+    -gravity SouthEast -pointsize 40 -annotate +100+100 "$(date)" \
+    roi-extract.pdf
 
+#convert -size 2600x3365 xc:white \
+#    -gravity center \( reg.png -resize 2400x2800 \) -composite \
+#    -gravity North -pointsize 40 -font "Nimbus-Sans" -annotate +0+100 \
+#        "${label_info}" \
+#    -gravity SouthEast -pointsize 40 -font "Nimbus-Sans" -annotate +100+100 "$(date)" \
+#    roi-extract.pdf
