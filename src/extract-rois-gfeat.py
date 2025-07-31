@@ -80,9 +80,12 @@ for cope_dir in cope_dirs:
     # Add ROI labels and merge
     labels = pandas.read_csv(label_file, delimiter='\t')
     vals = vals.merge(labels, on='index', how='outer')
+    
+    vals['ilabel'] = [f'{x:05d}' + '_' for x in vals['index']] + vals['label']
+    print(vals)
         
     # Reorganize with region as column name and add cope name column
-    vals = vals.pivot(index=['copenum','copename'], columns='label', values='value')
+    vals = vals.pivot(index=['copenum','copename'], columns='ilabel', values='value')
     if not isinstance(allvals, pandas.DataFrame):
         allvals = vals
     else:
