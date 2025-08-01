@@ -47,7 +47,7 @@ command:
     wget https://github.com/baxpr/roi-extract/archive/refs/tags/v2.0.0.tar.gz &&
     tar -zxf v2.0.0.tar.gz &&
     export PATH=/OUTPUTS/roi-extract-2.0.0/src:\$PATH &&
-    xwrapper.sh extract_rois_gfeat.sh
+    xwrapper.sh extract-rois-gfeat.sh
       --roi_fname atlas-GFWM11_space-MNI152NLin6Asym_res-01_dseg.nii.gz
       --gfeat_dir /INPUTS/gfeatWM/FEAT
       --out_dir /OUTPUTS
