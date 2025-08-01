@@ -43,10 +43,10 @@ command:
   container: fsl
   args: >-
     bash -c '
-    cd /INPUTS &&
-    curl -o roi-extract.tar.gz -L https://github.com/baxpr/roi-extract/archive/refs/tags/v2.0.0.tar.gz &&
-    tar -zxf roi-extract.tar.gz &&
-    export PATH=/INPUTS/roi-extract-2.0.0/src:\$PATH &&
+    cd /OUTPUTS &&
+    wget https://github.com/baxpr/roi-extract/archive/refs/tags/v2.0.0.tar.gz &&
+    tar -zxf v2.0.0.tar.gz &&
+    export PATH=/OUTPUTS/roi-extract-2.0.0/src:\$PATH &&
     xwrapper.sh extract_rois_gfeat.sh
       --roi_fname atlas-GFWM11_space-MNI152NLin6Asym_res-01_dseg.nii.gz
       --gfeat_dir /INPUTS/gfeatWM/FEAT
