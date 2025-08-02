@@ -81,9 +81,10 @@ for cope_dir in cope_dirs:
     labels = pandas.read_csv(label_file, delimiter='\t')
     vals = vals.merge(labels, on='index', how='outer')
     
-    vals['ilabel'] = [f'{x:05d}' + '_' for x in vals['index']] + vals['label']
+    vals['index0'] = [f'{x:05d}' for x in vals['index'].tolist()]
+    vals['ilabel'] = vals['index0'] + '_' + vals['label']
     print(vals)
-        
+            
     # Reorganize with region as column name and add cope name column
     vals = vals.pivot(index=['copenum','copename'], columns='ilabel', values='value')
     if not isinstance(allvals, pandas.DataFrame):
