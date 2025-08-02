@@ -83,7 +83,6 @@ for cope_dir in cope_dirs:
     
     vals['index0'] = [f'{x:05d}' for x in vals['index'].tolist()]
     vals['ilabel'] = vals['index0'] + '_' + vals['label']
-    print(vals)
             
     # Reorganize with region as column name and add cope name column
     vals = vals.pivot(index=['copenum','copename'], columns='ilabel', values='value')
