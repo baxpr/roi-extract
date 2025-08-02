@@ -35,7 +35,7 @@ outputs:
   - {pdf: roi-extract.pdf}
   - {path: ROIS, type: DIR, resource: ROIS}
   - {path: roidata.csv, type: FILE, resource: STATS}
-  - {path: roi-extract-2.0.0/src, type: DIR, resource: SCRIPTS}
+  - {path: roi-extract-2.0.1/src, type: DIR, resource: SCRIPTS}
 
 
 command: 
@@ -44,9 +44,9 @@ command:
   args: >-
     bash -c '
     cd /OUTPUTS &&
-    wget https://github.com/baxpr/roi-extract/archive/refs/tags/v2.0.0.tar.gz &&
-    tar -zxf v2.0.0.tar.gz &&
-    export PATH=/OUTPUTS/roi-extract-2.0.0/src:\$PATH &&
+    wget https://github.com/baxpr/roi-extract/archive/refs/tags/v2.0.1.tar.gz &&
+    tar -zxf v2.0.1.tar.gz &&
+    export PATH=/OUTPUTS/roi-extract-2.0.1/src:\$PATH &&
     xwrapper.sh extract-rois-gfeat.sh
       --roi_fname atlas-GFWM11_space-MNI152NLin6Asym_res-01_dseg.nii.gz
       --gfeat_dir /INPUTS/gfeatWM/FEAT
