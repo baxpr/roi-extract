@@ -67,15 +67,16 @@ for cope_dir in cope_dirs:
         resampling_target='labels',
         )
     vals = masker.fit_transform(os.path.join(cope_dir, 'stats', 'cope1.nii.gz'))
-    
+
     # Assume 1D array of extracted ROI values
-    vals = vals.tolist()[0]
+    vals = vals.tolist()
+    labs = [x for x in masker.labels_ if x!=0]
     vals = pandas.DataFrame({
         'copenum': con_num,
         'copename': con_name,
-        'index': masker.labels_,
+        'index': labs,
         'value': vals,
-        })
+        }, index=labs)
 
     # Add ROI labels and merge
     labels = pandas.read_csv(label_file, delimiter='\t')
