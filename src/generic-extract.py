@@ -50,18 +50,21 @@ for tgt_niigz in args.tgts_niigz:
     
     # Assume 1D array of extracted ROI values
     vals = vals.tolist()[0]
+    labs = [int(x) for x in masker.labels_ if x!=0]
     vals = pandas.DataFrame({
         'tgt_niigz': os.path.basename(tgt_niigz),
-        'index': masker.labels_,
+        'index': labs,
         'value': vals,
-        })
+        }, index=labs)
 
     # Add ROI labels and merge
     labels = pandas.read_csv(label_file, delimiter='\t')
     vals = vals.merge(labels, on='index', how='outer')
-        
+    vals['index0'] = [f'{x:05d}' for x in vals['index'].tolist()]
+    vals['ilabel'] = vals['index0'] + '_' + vals['label']
+
     # Reorganize with region as column name and add cope name column
-    vals = vals.pivot(index=['tgt_niigz'], columns='label', values='value')
+    vals = vals.pivot(index=['tgt_niigz'], columns='ilabel', values='value')
     if not isinstance(allvals, pandas.DataFrame):
         allvals = vals
     else:
