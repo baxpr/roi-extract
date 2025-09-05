@@ -11,10 +11,9 @@
 #   show overlay/rois on standard image yes/no
 #   mask to show on standard image (if given)
 
-# Follow nilearn procedures in extract-rois-gfeat.py
-
 
 # Inputs
+tgts_niigz=
 while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in      
@@ -22,10 +21,10 @@ while [[ $# -gt 0 ]]; do
         --out_dir)          export out_dir="$2";          shift; shift ;;
         --underlay_niigz)   export underlay_niigz="$2";   shift; shift ;;
         --mask_niigz)       export mask_niigz="$2";       shift; shift ;;
-        --show_std)         export show_std="$2";         shift; shift ;;
+        --show_std)         export show_std=TRUE;         shift ;;
         --tgts_niigz)
             next="$2"
-            while ! [[ "$next" =~ -.* ]] && [[ $# > 1 ]]; do
+            while ! [[ "$next" =~ ^-.* ]] && [[ $# > 1 ]]; do
                 tgts_niigz+=("$next")
                 shift
                 next="$2"
@@ -35,8 +34,17 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-
 # Find ROI image
 roi_dir=$(dirname "${BASH_SOURCE[0]}")/../rois
 roi_niigz="${roi_dir}"/"${roi_niigz}"
 
+# Extract ROI means
+generic-extract.py \
+	--roi_niigz "${roi_niigz}" \
+	--mask_niigz "${mask_niigz}" \
+	--tgts_niigz ${tgts_niigz[@]} \
+	--out_dir "${out_dir}"
+
+# Show
+# ROIs on underlay with mask
+# ROIs on standard with mask if requested
