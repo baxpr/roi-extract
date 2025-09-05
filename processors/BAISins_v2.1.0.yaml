@@ -1,0 +1,56 @@
+---
+procyamlversion: 3.0.0-dev.0
+
+containers:
+  - name: tbss
+    path: tbss-enigma_v1.0.1.sif
+    source: docker://baxterprogers/tbss-enigma:v1.0.1
+
+requirements:
+  walltime: 0-12
+  memory: 8000
+
+jobtemplate: job_template_v3.txt
+
+inputs:
+  xnat:
+
+    assessors:
+        
+        - name: assr_hct
+          proctypes: hct-fmri_v1
+          resources:
+            - {resource: NNN, ftype: FILE, fdest: NNN.nii.gz}
+
+    attrs:
+      - {varname: project, object: assessor, attr: project}
+      - {varname: subject, object: session, attr: subject_label}
+      - {varname: session, object: session, attr: label}
+      - {varname: scan, object: scan, attr: ID, ref: scan_fmri}
+     
+outputs:
+    FIXME
+  - {path: hurst-extract.pdf, type: FILE, resource: PDF}
+  - {path: rois.nii.gz, type: FILE, resource: ROIS}
+  - {path: rois-labels.csv, type: FILE, resource: ROIS}
+  - {path: rois-values.csv, type: FILE, resource: STATS}
+  - {path: roi-extract-2.1.0/src, type: DIR, resource: SCRIPTS}
+
+      
+command: 
+  type: singularity_exec
+  container: tbss
+  args: >-
+      FIXME
+    bash -c '
+    cd /INPUTS &&
+    curl -o roi-extract.tar.gz -L https://github.com/baxpr/roi-extract/archive/refs/tags/v2.1.0.tar.gz &&
+    tar -zxf roi-extract.tar.gz &&
+    export PATH=/INPUTS/roi-extract-2.1.0/src:\$PATH &&
+    xwrapper.sh generic-extract.sh
+      --roi_niigz atlas-BAISins_space-MNI152NLin6Asym_res-02_dseg.nii.gz
+      --img_niigz /INPUTS/hurst.nii.gz
+      --fmriprep_dir /INPUTS/fmriprepBIDS/fmriprepBIDS
+      --out_dir /OUTPUTS
+      --label_info "{project} {subject} {session} {scan}"
+    '
