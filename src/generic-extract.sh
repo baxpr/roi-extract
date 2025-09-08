@@ -2,8 +2,6 @@
 #
 # Generic ROI extraction
 
-# First target: ALFFs for NegVal
-
 # Inputs:
 #   roi filename from ../rois dir (generate roi label filename from this)
 #   target image to extract data from (or list of target images and store tags from their filenames)
@@ -14,6 +12,7 @@
 
 # Inputs
 tgts_niigz=
+show_std=TRUE
 while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in      
@@ -21,7 +20,7 @@ while [[ $# -gt 0 ]]; do
         --out_dir)          export out_dir="$2";          shift; shift ;;
         --underlay_niigz)   export underlay_niigz="$2";   shift; shift ;;
         --mask_niigz)       export mask_niigz="$2";       shift; shift ;;
-        --show_std)         export show_std=TRUE;         shift ;;
+        --dont_show_std)    export show_std=FALSE;        shift ;;
         --tgts_niigz)
             next="$2"
             while ! [[ "$next" =~ ^-.* ]] && [[ $# > 1 ]]; do
@@ -40,11 +39,35 @@ roi_niigz="${roi_dir}"/"${roi_niigz}"
 
 # Extract ROI means
 generic-extract.py \
-	--roi_niigz "${roi_niigz}" \
-	--mask_niigz "${mask_niigz}" \
-	--tgts_niigz ${tgts_niigz[@]} \
-	--out_dir "${out_dir}"
+    --roi_niigz "${roi_niigz}" \
+    --mask_niigz "${mask_niigz}" \
+    --tgts_niigz ${tgts_niigz[@]} \
+    --out_dir "${out_dir}"
 
-# Show
-# ROIs on underlay with mask
-# ROIs on standard with mask if requested
+
+# Get ROI locations
+IFS=$'\n' coms=($(fslstats -K "${roi_niigz}" "${roi_niigz}" -c))
+
+# Show on underlay
+# fsl 6.0.7.16 needed for -ss 0.05 option
+fslmaths "${underlay_niigz}" -nan underlay
+cd "${out_dir}"
+fsleyes render -of underlay.png \
+    --scene lightbox --displaySpace world --size 1200 600 \
+    --hideCursor -ss 0.04 -zr 0.05 0.95 \
+    underlay \
+    "${roi_niigz}" -ot label -l random_big -w 0 \
+    "${mask_niigz}" -ot mask -o
+
+std_file=""
+if [[ "${show_std}" = "TRUE" ]]; then
+    fsleyes render -of standard.png \
+        --scene lightbox --displaySpace world --size 1200 600 \
+        --hideCursor -ss 0.04 -zr 0.05 0.95 \
+        "${FSLDIR}"/data/standard/MNI152_T1_1mm \
+        "${roi_niigz}" -ot label -l random_big -w 0 \
+        "${mask_niigz}" -ot mask -o
+    std_file="standard.png"
+fi
+
+convert underlay.png "${std_file}" roi-extract.pdf
