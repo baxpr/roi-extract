@@ -50,8 +50,8 @@ IFS=$'\n' coms=($(fslstats -K "${roi_niigz}" "${roi_niigz}" -c))
 
 # Show on underlay
 # fsl 6.0.7.16 needed for -ss 0.05 option
-fslmaths "${underlay_niigz}" -nan underlay
 cd "${out_dir}"
+fslmaths "${underlay_niigz}" -nan underlay
 fsleyes render -of underlay.png \
     --scene lightbox --displaySpace world --size 1200 600 \
     --hideCursor -ss 0.04 -zr 0.05 0.95 \
