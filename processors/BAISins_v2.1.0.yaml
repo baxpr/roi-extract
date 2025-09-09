@@ -27,7 +27,6 @@ inputs:
       - {varname: project, object: assessor, attr: project}
       - {varname: subject, object: session, attr: subject_label}
       - {varname: session, object: session, attr: label}
-      - {varname: scan, object: scan, attr: ID, ref: scan_fmri}
      
 outputs:
   - {path: roi-extract.pdf, type: FILE, resource: PDF}
