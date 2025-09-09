@@ -31,7 +31,7 @@ atlas_str = os.path.basename(args.roi_niigz).split('_')[0]
 label_file = os.path.join(label_file, atlas_str + '_dseg.tsv')
 
 # Copy ROIs to outdir
-shutil.makedirs(os.path.join(args.out_dir, 'ROIS'), exist_ok=True)
+os.makedirs(os.path.join(args.out_dir, 'ROIS'), exist_ok=True)
 shutil.copy(args.roi_niigz, os.path.join(args.out_dir, 'ROIS'))
 shutil.copy(label_file, os.path.join(args.out_dir, 'ROIS'))
 
