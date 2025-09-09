@@ -35,7 +35,7 @@ outputs:
   - {path: roi-extract.pdf, type: FILE, resource: PDF}
   - {path: ROIS, type: DIR, resource: ROIS}
   - {path: roidata.csv, type: FILE, resource: STATS}
-  - {path: roi-extract-2.1.1/src, type: DIR, resource: SCRIPTS}
+  - {path: roi-extract-2.1.2/src, type: DIR, resource: SCRIPTS}
 
       
 command: 
@@ -44,9 +44,9 @@ command:
   args: >-
     bash -c '
     cd /OUTPUTS &&
-    wget https://github.com/baxpr/roi-extract/archive/refs/tags/v2.1.1.tar.gz &&
-    tar -zxf v2.1.1.tar.gz &&
-    export PATH=/OUTPUTS/roi-extract-2.1.1/src:\$PATH &&
+    wget https://github.com/baxpr/roi-extract/archive/refs/tags/v2.1.2.tar.gz &&
+    tar -zxf v2.1.2.tar.gz &&
+    export PATH=/OUTPUTS/roi-extract-2.1.2/src:\$PATH &&
     xwrapper.sh generic-extract.sh
       --roi_niigz atlas-BAISins_space-MNI152NLin6Asym_res-02_dseg.nii.gz
       --underlay_niigz /INPUTS/meanfmri.nii.gz
