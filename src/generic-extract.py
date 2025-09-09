@@ -9,6 +9,7 @@ import numpy
 import os
 import pandas
 import re
+import shutil
 import sys
 
 # Function to get a clean tag from image filename
@@ -28,6 +29,11 @@ args = parser.parse_args()
 label_file = os.path.dirname(args.roi_niigz)
 atlas_str = os.path.basename(args.roi_niigz).split('_')[0]
 label_file = os.path.join(label_file, atlas_str + '_dseg.tsv')
+
+# Copy ROIs to outdir
+shutil.makedirs(os.path.join(args.out_dir, 'ROIS'), exist_ok=True)
+shutil.copy(args.roi_niigz, os.path.join(args.out_dir, 'ROIS'))
+shutil.copy(label_file, os.path.join(args.out_dir, 'ROIS'))
 
 # Load images
 roi_img = nibabel.load(args.roi_niigz)
