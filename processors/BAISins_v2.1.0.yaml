@@ -2,10 +2,13 @@
 procyamlversion: 3.0.0-dev.0
 
 containers:
-  - name: tbss
-    path: tbss-enigma_v1.0.1.sif
-    source: docker://baxterprogers/tbss-enigma:v1.0.1
-
+#  - name: tbss
+#    path: tbss-enigma_v1.0.1.sif
+#    source: docker://baxterprogers/tbss-enigma:v1.0.1
+  - name: fsl
+    path: fsl-base_v6.0.7.18.sif
+    source: docker://baxterprogers/fsl-base:v6.0.7.18
+    
 requirements:
   walltime: 0-12
   memory: 8000
@@ -37,7 +40,7 @@ outputs:
       
 command: 
   type: singularity_exec
-  container: tbss
+  container: fsl
   args: >-
     bash -c '
     cd /INPUTS &&
