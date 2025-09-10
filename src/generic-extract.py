@@ -55,6 +55,8 @@ for tgt_niigz in args.tgts_niigz:
     vals = masker.fit_transform(tgt_niigz)
     
     # Assume 1D array of extracted ROI values
+    # Note:  use  vals.tolist()[0]  for numpy 1.26.4
+    #        use  vals.tolist()     for numpy 2.1.3
     vals = vals.tolist()
     labs = [int(x) for x in masker.labels_ if x!=0]
     vals = pandas.DataFrame({
