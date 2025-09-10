@@ -16,3 +16,14 @@ $(pwd)/generic-extract.sh \
 		../INPUTS/hct-fmri/spm_hct/con_0007.nii.gz \
 		../INPUTS/hct-fmri/spm_hct/con_0008.nii.gz \
 	--out_dir ../OUTPUTS
+
+
+exit 0
+
+
+# In container
+docker run -it --entrypoint bash \
+    --mount type=bind,src=`pwd -P`/INPUTS,dst=/INPUTS \
+    --mount type=bind,src=`pwd -P`/OUTPUTS,dst=/OUTPUTS \
+    --mount type=bind,src=`pwd -P`,dst=/wkdir \
+    baxterprogers/fsl-base:v6.0.7.18
