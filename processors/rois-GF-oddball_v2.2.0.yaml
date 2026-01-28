@@ -21,7 +21,7 @@ inputs:
     assessors:
         
         - name: assr_fmri
-          proctypes: combined-GF-oddball_v1
+          proctypes: combined-GF-Oddball_v1
           resources:
             - {resource: FEAT, ftype: DIR, fdest: gfeatOddball}
 
