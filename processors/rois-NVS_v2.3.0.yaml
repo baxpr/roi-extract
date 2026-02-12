@@ -1,0 +1,75 @@
+---
+procyamlversion: 3.0.0-dev.0
+
+containers:
+  - name: fsl
+    path: fsl-base_v6.0.7.18.sif
+    source: docker://baxterprogers/fsl-base:v6.0.7.18
+    
+requirements:
+  walltime: 0-12
+  memory: 8000
+
+jobtemplate: job_template_v3.txt
+
+inputs:
+  xnat:
+
+    assessors:
+        
+        - name: assr_nvs
+          proctypes: nvs-fmri_v1
+          resources:
+            - {resource: spm_nvs, ftype: DIR}
+            - {resource: MEANFMRI_MNI, ftype: FILE, fdest: meanfmri.nii.gz}
+
+    attrs:
+      - {varname: project, object: assessor, attr: project}
+      - {varname: subject, object: session, attr: subject_label}
+      - {varname: session, object: session, attr: label}
+     
+outputs:
+  - {path: roi-extract.pdf, type: FILE, resource: PDF}
+  - {path: ROIS, type: DIR, resource: ROIS}
+  - {path: roidata.csv, type: FILE, resource: STATS}
+  - {path: roi-extract/src, type: DIR, resource: SCRIPTS}
+
+      
+command: 
+  type: singularity_exec
+  container: fsl
+  args: >-
+    bash -c '
+    cd /OUTPUTS &&
+    wget https://github.com/baxpr/roi-extract/archive/refs/tags/v2.3.0.tar.gz &&
+    tar -zxf v*.tar.gz &&
+    mv roi-extract-* roi-extract &&
+    export PATH=/OUTPUTS/roi-extract/src:\$PATH &&
+    xwrapper.sh generic-extract.sh
+      --roi_niigz atlas-NegVal15_space-MNI152NLin6Asym_dseg.nii.gz
+      --underlay_niigz /INPUTS/meanfmri.nii.gz
+      --mask_niigz /INPUTS/spm_nvs/spm_nvs/mask.nii.gz
+      --tgts_niigz
+        /INPUTS/spm_nvs/spm_nvs/con_0001.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0002.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0003.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0004.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0005.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0006.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0007.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0008.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0009.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0010.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0011.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0012.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0013.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0014.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0015.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0016.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0017.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0018.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0019.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0020.nii.gz
+        /INPUTS/spm_nvs/spm_nvs/con_0021.nii.gz
+      --out_dir ../OUTPUTS
+    '
