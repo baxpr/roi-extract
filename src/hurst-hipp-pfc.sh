@@ -22,8 +22,24 @@ cd "${out_dir}"
 #    ${out_dir}/rois.nii.gz
 #    ${out_dir}/rois-labels.csv
 #
-# Hippocampus: ??
-# PFC: MR code, which ones?
+# Hippocampus (6):
+#   Head - Maureen anterior combination
+#   Body - Maureen's less the tail
+#   Tail - directly the freesurfer tail
+# 
+# DLPFC from script (4):
+#   lh_BA46.mgz
+#   lh_BA9_in_MFG.mgz
+#   rh
+#   rh
+# 
+# ACC (2):
+#   Rostral anterior cingulate from DK (aparc) 1026, 2026
+# 
+# CSF (2):
+#   lateral ventricles 4, 43
+
+
 
 
 # Find fmriprep subject and session labels
