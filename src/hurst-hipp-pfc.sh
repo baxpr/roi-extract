@@ -26,15 +26,66 @@ cd "${out_dir}"
 #   Head - Maureen anterior combination
 #   Body - Maureen's less the tail
 #   Tail - directly the freesurfer tail
+mri_binarize \
+    --i "${fs_subj_dir}"/mri/lh.hippoAmygLabels.mgz \
+    --o "${out_dir}"/lh-hipp-MM-head.mgz \
+    --match 233 235 237 239 241 243 245 \
+    --binval 1
+mri_binarize \
+    --i "${fs_subj_dir}"/mri/lh.hippoAmygLabels.mgz \
+    --o "${out_dir}"/lh-hipp-MM-headbody.mgz \
+    --match 234 236 238 240 242 244 246 \
+    --binval 2 \
+    --merge "${out_dir}"/lh-hipp-MM-head.mgz
+mri_binarize \
+    --i "${fs_subj_dir}"/mri/lh.hippoAmygLabels.mgz \
+    --o "${out_dir}"/lh-hipp-MM-headbodytail.mgz \
+    --match 226 \
+    --binval 3 \
+    --merge "${out_dir}"/lh-hipp-MM-headbody.mgz
+
+mri_binarize \
+    --i "${fs_subj_dir}"/mri/rh.hippoAmygLabels.mgz \
+    --o "${out_dir}"/rh-hipp-MM-head.mgz \
+    --match 233 235 237 239 241 243 245 \
+    --binval 4
+mri_binarize \
+    --i "${fs_subj_dir}"/mri/rh.hippoAmygLabels.mgz \
+    --o "${out_dir}"/rh-hipp-MM-headbody.mgz \
+    --match 234 236 238 240 242 244 246 \
+    --binval 5\
+    --merge "${out_dir}"/rh-hipp-MM-head.mgz
+mri_binarize \
+    --i "${fs_subj_dir}"/mri/rh.hippoAmygLabels.mgz \
+    --o "${out_dir}"/rh-hipp-MM-headbodytail.mgz \
+    --match 226 \
+    --binval 6 \
+    --merge "${out_dir}"/rh-hipp-MM-headbody.mgz
+
+# ACC (2):
+#   Rostral anterior cingulate from DK (aparc) 1026, 2026
+mri_binarize \
+    --i "${fs_subj_dir}"/mri/aparc+aseg.mgz \
+    --o "${out_dir}"/acc1.mgz \
+    --match 1026 \
+    --binval 7
+mri_binarize \
+    --i "${fs_subj_dir}"/mri/aparc+aseg.mgz \
+    --o "${out_dir}"/acc.mgz \
+    --match 2026 \
+    --binval 8 \
+    --merge "${out_dir}"/acc1.mgz
+
 # 
 # DLPFC from script (4):
 #   lh_BA46.mgz
 #   lh_BA9_in_MFG.mgz
 #   rh
 #   rh
-# 
-# ACC (2):
-#   Rostral anterior cingulate from DK (aparc) 1026, 2026
+#
+
+
+
 # 
 # CSF (2):
 #   lateral ventricles 4, 43
