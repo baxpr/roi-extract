@@ -1,0 +1,81 @@
+---
+procyamlversion: 3.0.0-dev.0
+
+description: Hurst exponent ROI extraction for hippocampus, https://github.com/baxpr/roi-extract
+
+containers:
+  - name: tbss
+    path: tbss-enigma_v1.0.1.sif
+    source: docker://baxterprogers/tbss-enigma:v1.0.1
+
+requirements:
+  walltime: 0-12
+  memory: 8000
+
+jobtemplate: job_template_v3.txt
+
+inputs:
+  xnat:
+      
+    filters:
+      - type: match
+        inputs: scan_fmri,assr_fmriprep/scan_fmri
+      - type: match
+        inputs: scan_fmri,assr_hurst/scan_fmri
+      - type: match
+        inputs: assr_fmriprep/scan_fmri,assr_hurst/scan_fmri
+
+    scans:
+
+      - name: scan_fmri
+        types: REST1_v2,REST2_v2
+        skip_unusable: True
+
+    assessors:
+        
+        - name: assr_hurst
+          proctypes: hurst_v1
+          resources:
+            - {resource: HURST, ftype: FILE, fdest: hurst.nii.gz}
+
+        - name: assr_fmriprep
+          proctypes: fmriprep-notopup_v24
+          resources:
+            - {resource: fmriprepBIDS, ftype: DIR, fdest: fmriprep}
+
+        - name: assr_freesurfer
+          proctypes: freesurfer800_v2
+          resources:
+            - {resource: SUBJECT, ftype: DIR, fdest: freesurfer}
+
+    attrs:
+      - {varname: project, object: assessor, attr: project}
+      - {varname: subject, object: session, attr: subject_label}
+      - {varname: session, object: session, attr: label}
+      - {varname: scan, object: scan, attr: ID, ref: scan_fmri}
+     
+outputs:
+  - {path: hurst-extract.pdf, type: FILE, resource: PDF}
+  - {path: rois.nii.gz, type: FILE, resource: ROIS}
+  - {path: rois-labels.csv, type: FILE, resource: ROIS}
+  - {path: rois-values.csv, type: FILE, resource: STATS}
+  - {path: roi-extract/src, type: DIR, resource: SCRIPTS}
+
+      
+command: 
+  type: singularity_exec
+  container: tbss
+  args: >-
+    bash -c '
+    cd /OUTPUTS &&
+    curl -o roi-extract.tar.gz -L https://github.com/baxpr/roi-extract/archive/refs/tags/v2.3.0.tar.gz &&
+    tar -zxf roi-extract.tar.gz &&
+    mv roi-extract-* roi-extract &&
+    export PATH=/OUTPUTS/roi-extract/src:\$PATH &&
+    xwrapper.sh hurst-hipp-pfc.sh
+      --fs_subj_dir /INPUTS/freesurfer/SUBJECT
+      --hurst_niigz /INPUTS/hurst.nii.gz
+      --fmriprep_dir /INPUTS/fmriprep/fmriprepBIDS
+      --out_dir /OUTPUTS
+      --label_info "{project} {subject} {session} {scan}"
+    '
