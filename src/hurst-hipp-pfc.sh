@@ -72,6 +72,7 @@ mri_convert \
     "${out_dir}"/rh-hipp-MM-headbodytail-hires.mgz \
     "${out_dir}"/rh-hipp-MM-headbodytail.mgz
 
+
 # ACC (2):
 #   Rostral anterior cingulate from DK (aparc) 1026, 2026
 mri_binarize \
@@ -86,21 +87,90 @@ mri_binarize \
     --binval 8 \
     --merge "${out_dir}"/acc1.mgz
 
-# 
-# DLPFC from script (4):
-#   lh_BA46.mgz
-#   lh_BA9_in_MFG.mgz
-#   rh
-#   rh
-#
 
-
-
-# 
 # CSF (2):
-#   lateral ventricles 4, 43
+#   Lateral ventricles 4, 43
+mri_binarize \
+    --i "${fs_subj_dir}"/mri/aparc+aseg.mgz \
+    --o "${out_dir}"/csf1.mgz \
+    --match 4 \
+    --binval 9
+mri_binarize \
+    --i "${fs_subj_dir}"/mri/aparc+aseg.mgz \
+    --o "${out_dir}"/csf.mgz \
+    --match 43 \
+    --binval 10 \
+    --merge "${out_dir}"/csf1.mgz
 
 
+
+# DLPFC from script (4):
+#   BA46.mgz
+#   BA9_in_MFG.mgz
+export SUBJECTS_DIR=$(dirname "${fs_subj_dir}")
+export subj=$(basename "${fs_subj_dir}")
+
+cp -R "${FREESURFER_HOME}"/subjects/fsaverage "${SUBJECTS_DIR}"
+
+mri_annotation2label --subject "${subj}" --hemi lh --annotation aparc --outdir "${out_dir}"/aparc_lh
+mri_annotation2label --subject "${subj}" --hemi rh --annotation aparc --outdir "${out_dir}"/aparc_rh
+
+for h in lh rh; do
+
+    # Convert rostral + caudal MFG to volume and combine
+    for roi in rostralmiddlefrontal caudalmiddlefrontal; do
+        mri_label2vol \
+            --label "${out_dir}"/aparc_${h}/${h}.${roi}.label \
+            --temp  "${fs_subj_dir}"/mri/nu.mgz \
+            --regheader "${fs_subj_dir}"/mri/nu.mgz \
+            --o "${out_dir}"/${h}_${roi}.mgz \
+            --fillthresh 0.5
+    done
+    mri_binarize \
+        --i "${out_dir}"/${h}_rostralmiddlefrontal.mgz \
+        --merge "${out_dir}"/${h}_caudalmiddlefrontal.mgz \
+        --min 0.5 \
+        --o "${out_dir}"/${h}_DK_dlpfc.mgz
+
+    # Project BA9 and BA46 annotation from fsaverage
+    mri_surf2surf \
+    --srcsubject fsaverage \
+    --trgsubject "${subj}" \
+    --hemi ${h} \
+    --sval-annot "${SUBJECTS_DIR}"/fsaverage/label/${h}.PALS_B12_Brodmann.annot \
+    --tval "${fs_subj_dir}"/label/${h}.PALS_B12_Brodmann.annot
+    
+    # Extract BA9 and BA46 labels
+    mkdir -p "${out_dir}"/brod_${h}
+    mri_annotation2label --subject "${subj}" --hemi ${h} --annotation PALS_B12_Brodmann --outdir "${out_dir}"/brod_${h}
+    
+    # Convert BA9 and BA46 to volume
+    for ba in 9 46; do
+        mri_label2vol \
+            --label "${out_dir}"/brod_${h}/${h}.Brodmann.${ba}.label \
+            --temp "${fs_subj_dir}"/mri/nu.mgz \
+            --regheader "${fs_subj_dir}"/mri/nu.mgz \
+            --o "${out_dir}"/${h}_BA${ba}.mgz \
+            --fillthresh 0.5
+    done
+
+    # Restrict BA9 to middle frontal gyrus
+    mri_binarize --i "${out_dir}"/${h}_BA9.mgz \
+    --min 0.5 \
+    --o "${out_dir}"/${h}_BA9_bin.mgz
+
+    mri_binarize --i "${out_dir}"/${h}_DK_dlpfc.mgz \
+    --min 0.5 \
+    --o /tmp/${h}_DK_bin.mgz
+
+    mri_and \
+    "${out_dir}"/${h}_BA9_bin.mgz \
+    "${out_dir}"/${h}_DK_bin.mgz \
+    "${out_dir}"/${h}_BA9_in_MFG.mgz
+
+done
+
+exit 0
 
 
 # Find fmriprep subject and session labels
