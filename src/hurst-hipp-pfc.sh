@@ -18,6 +18,11 @@ done
 # Work in output dir
 cd "${out_dir}"
 
+# Couple of paths
+export SUBJECTS_DIR=$(dirname "${fs_subj_dir}")
+export subj=$(basename "${fs_subj_dir}")
+
+
 # ROIs in FS native geom, stored at 
 #    ${out_dir}/rois.nii.gz
 #    ${out_dir}/rois-labels.csv
@@ -28,150 +33,184 @@ cd "${out_dir}"
 #   Tail - directly the freesurfer tail
 mri_binarize \
     --i "${fs_subj_dir}"/mri/lh.hippoAmygLabels.mgz \
-    --o "${out_dir}"/lh-hipp-MM-head.mgz \
+    --o lh-hipp-MM-head.mgz \
     --match 233 235 237 239 241 243 245 \
     --binval 1
 mri_binarize \
     --i "${fs_subj_dir}"/mri/lh.hippoAmygLabels.mgz \
-    --o "${out_dir}"/lh-hipp-MM-headbody.mgz \
+    --o lh-hipp-MM-headbody.mgz \
     --match 234 236 238 240 242 244 246 \
-    --binval 2 \
-    --merge "${out_dir}"/lh-hipp-MM-head.mgz
+    --binval 3 \
+    --merge lh-hipp-MM-head.mgz
 mri_binarize \
     --i "${fs_subj_dir}"/mri/lh.hippoAmygLabels.mgz \
-    --o "${out_dir}"/lh-hipp-MM-headbodytail-hires.mgz \
+    --o lh-hipp-MM-headbodytail-hires.mgz \
     --match 226 \
-    --binval 3 \
-    --merge "${out_dir}"/lh-hipp-MM-headbody.mgz
+    --binval 5 \
+    --merge lh-hipp-MM-headbody.mgz
 mri_convert \
     --like "${fs_subj_dir}"/mri/aparc+aseg.mgz \
     -rt nearest \
-    "${out_dir}"/lh-hipp-MM-headbodytail-hires.mgz \
-    "${out_dir}"/lh-hipp-MM-headbodytail.mgz
+    lh-hipp-MM-headbodytail-hires.mgz \
+    lh-hipp-MM-headbodytail.mgz
 
 mri_binarize \
     --i "${fs_subj_dir}"/mri/rh.hippoAmygLabels.mgz \
-    --o "${out_dir}"/rh-hipp-MM-head.mgz \
+    --o rh-hipp-MM-head.mgz \
     --match 233 235 237 239 241 243 245 \
-    --binval 4
+    --binval 2
 mri_binarize \
     --i "${fs_subj_dir}"/mri/rh.hippoAmygLabels.mgz \
-    --o "${out_dir}"/rh-hipp-MM-headbody.mgz \
+    --o rh-hipp-MM-headbody.mgz \
     --match 234 236 238 240 242 244 246 \
-    --binval 5\
-    --merge "${out_dir}"/rh-hipp-MM-head.mgz
+    --binval 4 \
+    --merge rh-hipp-MM-head.mgz
 mri_binarize \
     --i "${fs_subj_dir}"/mri/rh.hippoAmygLabels.mgz \
-    --o "${out_dir}"/rh-hipp-MM-headbodytail-hires.mgz \
+    --o rh-hipp-MM-headbodytail-hires.mgz \
     --match 226 \
     --binval 6 \
-    --merge "${out_dir}"/rh-hipp-MM-headbody.mgz
+    --merge rh-hipp-MM-headbody.mgz
 mri_convert \
     --like "${fs_subj_dir}"/mri/aparc+aseg.mgz \
     -rt nearest \
-    "${out_dir}"/rh-hipp-MM-headbodytail-hires.mgz \
-    "${out_dir}"/rh-hipp-MM-headbodytail.mgz
+    rh-hipp-MM-headbodytail-hires.mgz \
+    rh-hipp-MM-headbodytail.mgz
 
 
 # ACC (2):
 #   Rostral anterior cingulate from DK (aparc) 1026, 2026
 mri_binarize \
     --i "${fs_subj_dir}"/mri/aparc+aseg.mgz \
-    --o "${out_dir}"/acc1.mgz \
+    --o acc1.mgz \
     --match 1026 \
     --binval 7
 mri_binarize \
     --i "${fs_subj_dir}"/mri/aparc+aseg.mgz \
-    --o "${out_dir}"/acc.mgz \
+    --o acc.mgz \
     --match 2026 \
     --binval 8 \
-    --merge "${out_dir}"/acc1.mgz
+    --merge acc1.mgz
 
 
 # CSF (2):
 #   Lateral ventricles 4, 43
 mri_binarize \
     --i "${fs_subj_dir}"/mri/aparc+aseg.mgz \
-    --o "${out_dir}"/csf1.mgz \
+    --o csf1.mgz \
     --match 4 \
     --binval 9
 mri_binarize \
     --i "${fs_subj_dir}"/mri/aparc+aseg.mgz \
-    --o "${out_dir}"/csf.mgz \
+    --o csf.mgz \
     --match 43 \
     --binval 10 \
-    --merge "${out_dir}"/csf1.mgz
+    --merge csf1.mgz
 
 
 
 # DLPFC from script (4):
 #   BA46.mgz
 #   BA9_in_MFG.mgz
-export SUBJECTS_DIR=$(dirname "${fs_subj_dir}")
-export subj=$(basename "${fs_subj_dir}")
-
 cp -R "${FREESURFER_HOME}"/subjects/fsaverage "${SUBJECTS_DIR}"
 
-mri_annotation2label --subject "${subj}" --hemi lh --annotation aparc --outdir "${out_dir}"/aparc_lh
-mri_annotation2label --subject "${subj}" --hemi rh --annotation aparc --outdir "${out_dir}"/aparc_rh
+mri_annotation2label --subject "${subj}" --hemi lh --annotation aparc --outdir aparc_lh
+mri_annotation2label --subject "${subj}" --hemi rh --annotation aparc --outdir aparc_rh
 
 for h in lh rh; do
 
     # Convert rostral + caudal MFG to volume and combine
     for roi in rostralmiddlefrontal caudalmiddlefrontal; do
         mri_label2vol \
-            --label "${out_dir}"/aparc_${h}/${h}.${roi}.label \
+            --label aparc_${h}/${h}.${roi}.label \
             --temp  "${fs_subj_dir}"/mri/nu.mgz \
             --regheader "${fs_subj_dir}"/mri/nu.mgz \
-            --o "${out_dir}"/${h}_${roi}.mgz \
-            --fillthresh 0.5
+            --o ${h}_${roi}.mgz \
+            --fillthresh 0.5 \
+            --subject "${subj}" \
+            --fill-ribbon \
+            --hemi ${h}
     done
     mri_binarize \
-        --i "${out_dir}"/${h}_rostralmiddlefrontal.mgz \
-        --merge "${out_dir}"/${h}_caudalmiddlefrontal.mgz \
+        --i ${h}_rostralmiddlefrontal.mgz \
+        --merge ${h}_caudalmiddlefrontal.mgz \
         --min 0.5 \
-        --o "${out_dir}"/${h}_DK_dlpfc.mgz
+        --o ${h}_DK_dlpfc.mgz
 
     # Project BA9 and BA46 annotation from fsaverage
     mri_surf2surf \
-    --srcsubject fsaverage \
-    --trgsubject "${subj}" \
-    --hemi ${h} \
-    --sval-annot "${SUBJECTS_DIR}"/fsaverage/label/${h}.PALS_B12_Brodmann.annot \
-    --tval "${fs_subj_dir}"/label/${h}.PALS_B12_Brodmann.annot
+        --srcsubject fsaverage \
+        --trgsubject "${subj}" \
+        --hemi ${h} \
+        --sval-annot "${SUBJECTS_DIR}"/fsaverage/label/${h}.PALS_B12_Brodmann.annot \
+        --tval "${fs_subj_dir}"/label/${h}.PALS_B12_Brodmann.annot
     
     # Extract BA9 and BA46 labels
-    mkdir -p "${out_dir}"/brod_${h}
-    mri_annotation2label --subject "${subj}" --hemi ${h} --annotation PALS_B12_Brodmann --outdir "${out_dir}"/brod_${h}
+    mkdir -p brod_${h}
+    mri_annotation2label --subject "${subj}" --hemi ${h} --annotation PALS_B12_Brodmann --outdir brod_${h}
     
     # Convert BA9 and BA46 to volume
     for ba in 9 46; do
         mri_label2vol \
-            --label "${out_dir}"/brod_${h}/${h}.Brodmann.${ba}.label \
+            --label brod_${h}/${h}.Brodmann.${ba}.label \
             --temp "${fs_subj_dir}"/mri/nu.mgz \
             --regheader "${fs_subj_dir}"/mri/nu.mgz \
-            --o "${out_dir}"/${h}_BA${ba}.mgz \
-            --fillthresh 0.5
+            --o ${h}_BA${ba}.mgz \
+            --fillthresh 0.5 \
+            --subject "${subj}" \
+            --fill-ribbon \
+            --hemi ${h}
     done
 
     # Restrict BA9 to middle frontal gyrus
-    mri_binarize --i "${out_dir}"/${h}_BA9.mgz \
-    --min 0.5 \
-    --o "${out_dir}"/${h}_BA9_bin.mgz
+    mri_binarize \
+        --i ${h}_BA9.mgz \
+        --min 0.5 \
+        --o ${h}_BA9_bin.mgz
 
-    mri_binarize --i "${out_dir}"/${h}_DK_dlpfc.mgz \
-    --min 0.5 \
-    --o /tmp/${h}_DK_bin.mgz
+    mri_binarize \
+        --i ${h}_DK_dlpfc.mgz \
+        --min 0.5 \
+        --o ${h}_DK_bin.mgz
 
     mri_and \
-    "${out_dir}"/${h}_BA9_bin.mgz \
-    "${out_dir}"/${h}_DK_bin.mgz \
-    "${out_dir}"/${h}_BA9_in_MFG.mgz
+        ${h}_BA9_bin.mgz \
+        ${h}_DK_bin.mgz \
+        ${h}_BA9_in_MFG.mgz
 
 done
 
-exit 0
 
+# Combine all ROIs and make label file
+mri_binarize --i lh_BA46.mgz       --min 0.5 --binval 11                 --o tmp.mgz
+mri_binarize --i rh_BA46.mgz       --min 0.5 --binval 12 --merge tmp.mgz --o tmp.mgz
+mri_binarize --i lh_BA9_in_MFG.mgz --min 0.5 --binval 13 --merge tmp.mgz --o tmp.mgz
+mri_binarize --i rh_BA9_in_MFG.mgz --min 0.5 --binval 14 --merge tmp.mgz --o tmp.mgz
+mris_calc --output tmp.mgz tmp.mgz add acc.mgz
+mris_calc --output tmp.mgz tmp.mgz add csf.mgz
+mris_calc --output tmp.mgz tmp.mgz add rh-hipp-MM-headbodytail.mgz
+mris_calc --output rois.mgz tmp.mgz add lh-hipp-MM-headbodytail.mgz
+mri_convert rois.mgz rois.nii.gz
+
+cat << EOF > rois-labels.csv
+Label,Region
+1,lh_hipp_head
+2,rh_hipp_head
+3,lh_hipp_body
+4,rh_hipp_body
+5,lh_hipp_tail
+6,rh_hipp_tail
+7,lh_ant_cing
+8,rh_ant_cing
+9,lh_lat_vent
+10,rh_lat_vent
+11,lh_BA46
+12,rh_BA46
+13,lh_BA9_in_MFG
+14,rh_BA9_in_MFG
+EOF
+
+exit 0
 
 # Find fmriprep subject and session labels
 subhtml=$(ls -d "${fmriprep_dir}"/sub-*.html)
@@ -200,7 +239,6 @@ extract-rois.py \
     --roilabels_csv rois-labels.csv \
     --output_csv rois-values.csv \
     --value_label Hurst
-
 
 
 # PDF showing T1, ROIs, and image in register
