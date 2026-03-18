@@ -68,7 +68,7 @@ command:
   args: >-
     bash -c '
     cd /OUTPUTS &&
-    curl -o roi-extract.tar.gz -L https://github.com/baxpr/roi-extract/archive/refs/tags/v2.3.0.tar.gz &&
+    curl -o roi-extract.tar.gz -L https://github.com/baxpr/roi-extract/archive/refs/tags/v2.4.0.tar.gz &&
     tar -zxf roi-extract.tar.gz &&
     mv roi-extract-* roi-extract &&
     export PATH=/OUTPUTS/roi-extract/src:\$PATH &&
