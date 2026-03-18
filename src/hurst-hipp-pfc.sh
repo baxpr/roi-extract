@@ -21,7 +21,7 @@ cd "${out_dir}"
 # ROIs in FS native geom, stored at 
 #    ${out_dir}/rois.nii.gz
 #    ${out_dir}/rois-labels.csv
-#
+
 # Hippocampus (6):
 #   Head - Maureen anterior combination
 #   Body - Maureen's less the tail
@@ -39,10 +39,15 @@ mri_binarize \
     --merge "${out_dir}"/lh-hipp-MM-head.mgz
 mri_binarize \
     --i "${fs_subj_dir}"/mri/lh.hippoAmygLabels.mgz \
-    --o "${out_dir}"/lh-hipp-MM-headbodytail.mgz \
+    --o "${out_dir}"/lh-hipp-MM-headbodytail-hires.mgz \
     --match 226 \
     --binval 3 \
     --merge "${out_dir}"/lh-hipp-MM-headbody.mgz
+mri_convert \
+    --like "${fs_subj_dir}"/mri/aparc+aseg.mgz \
+    -rt nearest \
+    "${out_dir}"/lh-hipp-MM-headbodytail-hires.mgz \
+    "${out_dir}"/lh-hipp-MM-headbodytail.mgz
 
 mri_binarize \
     --i "${fs_subj_dir}"/mri/rh.hippoAmygLabels.mgz \
@@ -57,10 +62,15 @@ mri_binarize \
     --merge "${out_dir}"/rh-hipp-MM-head.mgz
 mri_binarize \
     --i "${fs_subj_dir}"/mri/rh.hippoAmygLabels.mgz \
-    --o "${out_dir}"/rh-hipp-MM-headbodytail.mgz \
+    --o "${out_dir}"/rh-hipp-MM-headbodytail-hires.mgz \
     --match 226 \
     --binval 6 \
     --merge "${out_dir}"/rh-hipp-MM-headbody.mgz
+mri_convert \
+    --like "${fs_subj_dir}"/mri/aparc+aseg.mgz \
+    -rt nearest \
+    "${out_dir}"/rh-hipp-MM-headbodytail-hires.mgz \
+    "${out_dir}"/rh-hipp-MM-headbodytail.mgz
 
 # ACC (2):
 #   Rostral anterior cingulate from DK (aparc) 1026, 2026
