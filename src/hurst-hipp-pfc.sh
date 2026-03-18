@@ -8,7 +8,7 @@ while [[ $# -gt 0 ]]; do
     case $key in      
         --fs_subj_dir)    export fs_subj_dir="$2";    shift; shift ;;
         --fmriprep_dir)   export fmriprep_dir="$2";   shift; shift ;;
-        --img_niigz)      export img_niigz="$2";      shift; shift ;;
+        --hurst_niigz)    export hurst_niigz="$2";    shift; shift ;;
         --out_dir)        export out_dir="$2";        shift; shift ;;
         --label_info)     export label_info="$2";     shift; shift ;;
         *) echo "Input ${1} not recognized"; shift ;;
@@ -210,7 +210,6 @@ Label,Region
 14,rh_BA9_in_MFG
 EOF
 
-exit 0
 
 # Find fmriprep subject and session labels
 subhtml=$(ls -d "${fmriprep_dir}"/sub-*.html)
@@ -226,7 +225,7 @@ xfm=$(ls "${fmriprep_dir}/${sub}/${ses}/anat/${sub}_${ses}_from-MNI152NLin2009cA
 
 # Apply transform
 antsApplyTransforms \
-    -i "${img_niigz}" \
+    -i "${hurst_niigz}" \
     -r "${out_dir}/rois.nii.gz" \
     -t "${xfm}" \
     -n Linear \
