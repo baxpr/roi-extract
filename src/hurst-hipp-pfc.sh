@@ -181,16 +181,25 @@ for h in lh rh; do
 done
 
 
-# Combine all ROIs and make label file
+# Combine all ROIs and make label file. Mask other regions out of hippocampus
+# (hippocampus was resampled from hires space)
 mri_binarize --i lh_BA46.mgz       --min 0.5 --binval 11                 --o tmp.mgz
 mri_binarize --i rh_BA46.mgz       --min 0.5 --binval 12 --merge tmp.mgz --o tmp.mgz
 mri_binarize --i lh_BA9_in_MFG.mgz --min 0.5 --binval 13 --merge tmp.mgz --o tmp.mgz
 mri_binarize --i rh_BA9_in_MFG.mgz --min 0.5 --binval 14 --merge tmp.mgz --o tmp.mgz
 mris_calc --output tmp.mgz tmp.mgz add acc.mgz
 mris_calc --output tmp.mgz tmp.mgz add csf.mgz
-mris_calc --output tmp.mgz tmp.mgz add rh-hipp-MM-headbodytail.mgz
-mris_calc --output rois.mgz tmp.mgz add lh-hipp-MM-headbodytail.mgz
-mri_convert rois.mgz rois.nii.gz
+mri_binarize \
+    --i tmp.mgz \
+    --min 0.5 \
+    --binval 0 \
+    --binvalnot 1 \
+    --o tmpmask.mgz
+mris_calc --output lh-hipp-MM-headbodytail-masked.mgz lh-hipp-MM-headbodytail.mgz mul tmpmask.mgz
+mris_calc --output rh-hipp-MM-headbodytail-masked.mgz rh-hipp-MM-headbodytail.mgz mul tmpmask.mgz
+mris_calc --output tmp.mgz tmp.mgz add lh-hipp-MM-headbodytail-masked.mgz
+mris_calc --output tmp.mgz tmp.mgz add rh-hipp-MM-headbodytail-masked.mgz
+mri_convert tmp.mgz rois.nii.gz
 
 cat << EOF > rois-labels.csv
 Label,Region
