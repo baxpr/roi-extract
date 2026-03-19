@@ -22,8 +22,6 @@ inputs:
         inputs: scan_fmri,assr_fmriprep/scan_fmri
       - type: match
         inputs: scan_fmri,assr_hurst/scan_fmri
-      - type: match
-        inputs: assr_fmriprep/scan_fmri,assr_hurst/scan_fmri
 
     scans:
 
