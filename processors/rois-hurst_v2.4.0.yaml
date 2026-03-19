@@ -4,9 +4,9 @@ procyamlversion: 3.0.0-dev.0
 description: Hurst exponent ROI extraction for hippocampus, https://github.com/baxpr/roi-extract
 
 containers:
-  - name: tbss
-    path: tbss-enigma_v1.0.1.sif
-    source: docker://baxterprogers/tbss-enigma:v1.0.1
+  - name: fmriprep
+    path: fmriprep_24.1.1.sif
+    source: docker://nipreps/fmriprep:24.1.1
 
 requirements:
   walltime: 0-12
@@ -64,7 +64,7 @@ outputs:
       
 command: 
   type: singularity_exec
-  container: tbss
+  container: fmriprep
   args: >-
     bash -c '
     cd /OUTPUTS &&
