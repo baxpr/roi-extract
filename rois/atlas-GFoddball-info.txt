@@ -1,0 +1,6 @@
+ROIs for GF oddball task fmri
+
+Collier AK, Wolf DH, Valdez JN, Turetsky BI, Elliott MA, Gur RE, Gur RC. Comparison of auditory and visual oddball fMRI in schizophrenia. Schizophr Res. 2014 Sep;158(1-3):183-8. doi: 10.1016/j.schres.2014.06.019. Epub 2014 Jul 15. PMID: 25037525; PMCID: PMC4751027.
+https://pubmed.ncbi.nlm.nih.gov/25037525/
+
+Auditory target > standard in healthy controls reported in Supplementary Table 1. Moved coordinates of ROI #19 (R lingual gyrus; 4, -76,-10) to 12, -76, -6 (x, y, z) to better represent lingual gyrus. Removed original ROI #20 (R lateral occipital cortex; 29, 19, 35) due to incorrect coordinate location. 
