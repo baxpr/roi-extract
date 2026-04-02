@@ -7,6 +7,9 @@ containers:
   - name: fmriprep
     path: fmriprep_24.1.1.sif
     source: docker://nipreps/fmriprep:24.1.1
+  - name: fsl
+    path: fsl-base_v6.0.7.18.sif
+    source: docker://baxterprogers/fsl-base:v6.0.7.18
 
 requirements:
   walltime: 0-12
@@ -66,7 +69,7 @@ command:
   args: >-
     bash -c '
     cd /OUTPUTS &&
-    curl -o roi-extract.tar.gz -L https://github.com/baxpr/roi-extract/archive/refs/tags/v2.4.0.tar.gz &&
+    curl -o roi-extract.tar.gz -L https://github.com/baxpr/roi-extract/archive/refs/tags/v2.5.0.tar.gz &&
     tar -zxf roi-extract.tar.gz &&
     mv roi-extract-* roi-extract &&
     export PATH=/OUTPUTS/roi-extract/src:\$PATH &&
@@ -75,5 +78,16 @@ command:
       --hurst_niigz /INPUTS/hurst.nii.gz
       --fmriprep_dir /INPUTS/fmriprep/fmriprepBIDS
       --out_dir /OUTPUTS
-      --label_info "{project} {subject} {session} {scan}"
+    '
+
+post:
+  type: singularity_exec
+  container: fsl
+  args: >-
+    bash -c '
+    export PATH=/OUTPUTS/roi-extract/src:\$PATH &&
+    xwrapper.sh hurst-hipp-pfc-pdf.sh
+    --fmriprep_dir /INPUTS/fmriprep/fmriprepBIDS
+    --out_dir /OUTPUTS
+    --label_info "{project} {subject} {session} {scan}"
     '
