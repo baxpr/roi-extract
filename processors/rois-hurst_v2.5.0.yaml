@@ -66,6 +66,7 @@ outputs:
 command: 
   type: singularity_exec
   container: fmriprep
+  extraopts: --bind /data/mcr/centos7/FS6/license.txt:/opt/freesurfer/.license
   args: >-
     bash -c '
     cd /OUTPUTS &&
