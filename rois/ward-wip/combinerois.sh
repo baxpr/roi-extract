@@ -30,10 +30,10 @@ fslmaths TMS -binv mask
 # Add the others
 fslmaths cravingchange_cluster1 -bin -mul mask -mul 5 -add TMS wip1
 fslmaths wip1 -binv mask
-fslmaths Deen_L-AI_union -bin -mul mask -mul 6 -add wip1 fullMNIset
+fslmaths Deen_L-AI_union -bin -mul mask -mul 6 -add wip1 ../atlas-TMSset_space-MNI152NLin6Asym_dseg.nii.gz
 
 # Labels
-cat << EOF > fullMNIset-labels.tsv
+cat << EOF > ../atlas-TMSset_dseg.tsv
 index	label
 1	L_DLPFC
 2	R_DLPFC
