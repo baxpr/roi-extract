@@ -8,6 +8,7 @@ while [[ $# -gt 0 ]]; do
     case $key in      
         --fs_subj_dir)    export fs_subj_dir="$2";    shift; shift ;;
         --fmriprep_dir)   export fmriprep_dir="$2";   shift; shift ;;
+        --hurst_niigz)    export hurst_niigz="$2";    shift; shift ;;
         --out_dir)        export out_dir="$2";        shift; shift ;;
         *) echo "Input ${1} not recognized"; shift ;;
     esac
@@ -248,3 +249,11 @@ index	label
 23	lh_BA9_in_MFG
 24	rh_BA9_in_MFG
 EOF
+
+# Extract ROI means
+extract-rois.py \
+    --tgt_niigz "${hurst_niigz}" \
+    --roi_niigz "${out_dir}"/roisMNIplusTMS.nii.gz \
+    --roilabels_csv "${out_dir}"/roisMNIplusTMS-labels.tsv \
+    --output_csv rois-values.csv \
+    --value_label Hurst

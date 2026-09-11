@@ -1,0 +1,95 @@
+---
+procyamlversion: 3.0.0-dev.0
+
+description: Hurst exponent ROI extraction for hippocampus, https://github.com/baxpr/roi-extract
+
+containers:
+  - name: fmriprep
+    path: fmriprep_24.1.1.sif
+    source: docker://nipreps/fmriprep:24.1.1
+  - name: fsl
+    path: fsl-base_v6.0.7.18.sif
+    source: docker://baxterprogers/fsl-base:v6.0.7.18
+
+requirements:
+  walltime: 0-12
+  memory: 8000
+
+jobtemplate: job_template_v3.txt
+
+inputs:
+  xnat:
+      
+    filters:
+      - type: match
+        inputs: scan_fmri,assr_fmriprep/scan_fmri
+      - type: match
+        inputs: scan_fmri,assr_hurst/scan_fmri
+
+    scans:
+
+      - name: scan_fmri
+        types: REST1_v2,REST2_v2
+        skip_unusable: True
+
+    assessors:
+        
+        - name: assr_hurst
+          proctypes: hurst_v1
+          resources:
+            - {resource: HURST, ftype: FILE, fdest: hurst.nii.gz}
+
+        - name: assr_fmriprep
+          proctypes: fmriprep-notopup_v24
+          resources:
+            - {resource: fmriprepBIDS, ftype: DIR, fdest: fmriprep}
+
+        - name: assr_freesurfer
+          proctypes: freesurfer800_v2
+          resources:
+            - {resource: SUBJECT, ftype: DIR, fdest: freesurfer}
+
+    attrs:
+      - {varname: project, object: assessor, attr: project}
+      - {varname: subject, object: session, attr: subject_label}
+      - {varname: session, object: session, attr: label}
+      - {varname: scan, object: scan, attr: ID, ref: scan_fmri}
+     
+outputs:
+  - {path: hurst-extract.pdf, type: FILE, resource: PDF}
+  - {path: roisMNIplusTMS.nii.gz, type: FILE, resource: ROIS}
+  - {path: roisMNIplusTMS-labels.tsv, type: FILE, resource: ROIS}
+  - {path: rois-values.csv, type: FILE, resource: STATS}
+  - {path: roi-extract/src, type: DIR, resource: SCRIPTS}
+
+      
+command: 
+  type: singularity_exec
+  container: fmriprep
+  extraopts: --bind /data/mcr/rocky9/FS/license.txt:/opt/freesurfer/license.txt
+  args: >-
+    bash -c '
+    cd /OUTPUTS &&
+    curl -o roi-extract.tar.gz -L https://github.com/baxpr/roi-extract/archive/refs/tags/v2.6.0.tar.gz &&
+    tar -zxf roi-extract.tar.gz &&
+    mv roi-extract-* roi-extract &&
+    export PATH=/OUTPUTS/roi-extract/src:\$PATH &&
+    xwrapper.sh hurst-hipp-pfc-plusTMS.sh
+      --fs_subj_dir /INPUTS/freesurfer/SUBJECT
+      --fmriprep_dir /INPUTS/fmriprep/fmriprepBIDS
+      --hurst_niigz /INPUTS/hurst.nii.gz
+      --out_dir /OUTPUTS
+    '
+
+post:
+  type: singularity_exec
+  container: fsl
+  args: >-
+    bash -c '
+    export PATH=/OUTPUTS/roi-extract/src:\$PATH &&
+    xwrapper.sh hurst-hipp-pfc-plusTMS-pdf.sh
+    --fmriprep_dir /INPUTS/fmriprep/fmriprepBIDS
+    --hurst_niigz /INPUTS/hurst.nii.gz
+    --out_dir /OUTPUTS
+    --label_info "{project} {subject} {session} {scan}"
+    '
