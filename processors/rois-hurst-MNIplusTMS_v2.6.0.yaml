@@ -29,7 +29,7 @@ inputs:
     scans:
 
       - name: scan_fmri
-        types: REST1_v2,REST2_v2
+        types: rsfMRI
         skip_unusable: True
 
     assessors:
@@ -40,12 +40,12 @@ inputs:
             - {resource: HURST, ftype: FILE, fdest: hurst.nii.gz}
 
         - name: assr_fmriprep
-          proctypes: fmriprep-notopup_v24
+          proctypes: fmriprep-nofs_v24
           resources:
             - {resource: fmriprepBIDS, ftype: DIR, fdest: fmriprep}
 
         - name: assr_freesurfer
-          proctypes: freesurfer800_v2
+          proctypes: freesurfer720_v2
           resources:
             - {resource: SUBJECT, ftype: DIR, fdest: freesurfer}
 
@@ -62,7 +62,7 @@ outputs:
   - {path: rois-values.csv, type: FILE, resource: STATS}
   - {path: roi-extract/src, type: DIR, resource: SCRIPTS}
 
-      
+
 command: 
   type: singularity_exec
   container: fmriprep
