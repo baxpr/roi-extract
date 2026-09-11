@@ -45,7 +45,7 @@ inputs:
             - {resource: fmriprepBIDS, ftype: DIR, fdest: fmriprep}
 
         - name: assr_freesurfer
-          proctypes: freesurfer810_v2
+          proctypes: freesurfer810_v1
           resources:
             - {resource: SUBJECT, ftype: DIR, fdest: freesurfer}
 
