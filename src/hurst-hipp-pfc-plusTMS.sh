@@ -223,7 +223,7 @@ antsApplyTransforms \
 
 # Combine subject FS and TMSset
 fslmaths roisMNI -binv mask
-fslmaths ${roi_dir}/atlas-TMSset_space-MNI152NLin6Asym_dseg.nii.gz -mul mask -add roisMNI roisMNIplusTMS
+fslmaths ${roi_dir}/atlas-TMSset_space-MNI152NLin6Asym_dseg.nii.gz -mul mask -add roisMNI roisMNIplusTMS_orig
 
 # ROI labels - assuming specific known values in TMSset
 cat << EOF > roisMNIplusTMS-labels.tsv
@@ -249,6 +249,13 @@ index	label
 23	lh_BA9_in_MFG
 24	rh_BA9_in_MFG
 EOF
+
+# Resample ROIs to Hurst geom
+mri_convert \
+    roisMNIplusTMS_orig.nii.gz \
+    roisMNIplusTMS.nii.gz \
+    --reslice_like "${hurst_niigz}" \
+    --resample_type nearest
 
 # Extract ROI means
 extract-rois.py \
