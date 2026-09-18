@@ -226,28 +226,28 @@ fslmaths roisMNI -binv mask
 fslmaths ${roi_dir}/atlas-TMSset_space-MNI152NLin6Asym_dseg.nii.gz -mul mask -add roisMNI roisMNIplusTMS_orig
 
 # ROI labels - assuming specific known values in TMSset
-cat << EOF > roisMNIplusTMS-labels.tsv
-index	label
-1	L_DLPFC
-2	R_DLPFC
-3	L_Parietal
-4	R_Parietal
-5	R_craving1
-6	L_AI_Deen
-11	lh_hipp_head
-12	rh_hipp_head
-13	lh_hipp_body
-14	rh_hipp_body
-15	lh_hipp_tail
-16	rh_hipp_tail
-17	lh_ant_cing
-18	rh_ant_cing
-19	lh_lat_vent
-20	rh_lat_vent
-21	lh_BA46
-22	rh_BA46
-23	lh_BA9_in_MFG
-24	rh_BA9_in_MFG
+cat << EOF > roisMNIplusTMS-labels.csv
+Label,Region
+1,L_DLPFC
+2,R_DLPFC
+3,L_Parietal
+4,R_Parietal
+5,R_craving1
+6,L_AI_Deen
+11,lh_hipp_head
+12,rh_hipp_head
+13,lh_hipp_body
+14,rh_hipp_body
+15,lh_hipp_tail
+16,rh_hipp_tail
+17,lh_ant_cing
+18,rh_ant_cing
+19,lh_lat_vent
+20,rh_lat_vent
+21,lh_BA46
+22,rh_BA46
+23,lh_BA9_in_MFG
+24,rh_BA9_in_MFG
 EOF
 
 # Resample ROIs to Hurst geom
@@ -261,6 +261,6 @@ mri_convert \
 extract-rois.py \
     --tgt_niigz "${hurst_niigz}" \
     --roi_niigz "${out_dir}"/roisMNIplusTMS.nii.gz \
-    --roilabels_csv "${out_dir}"/roisMNIplusTMS-labels.tsv \
+    --roilabels_csv "${out_dir}"/roisMNIplusTMS-labels.csv \
     --output_csv rois-values.csv \
     --value_label Hurst

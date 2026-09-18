@@ -58,7 +58,7 @@ inputs:
 outputs:
   - {path: hurst-extract.pdf, type: FILE, resource: PDF}
   - {path: roisMNIplusTMS.nii.gz, type: FILE, resource: ROIS}
-  - {path: roisMNIplusTMS-labels.tsv, type: FILE, resource: ROIS}
+  - {path: roisMNIplusTMS-labels.csv, type: FILE, resource: ROIS}
   - {path: rois-values.csv, type: FILE, resource: STATS}
   - {path: roi-extract/src, type: DIR, resource: SCRIPTS}
 
@@ -70,7 +70,7 @@ command:
   args: >-
     bash -c '
     cd /OUTPUTS &&
-    curl -o roi-extract.tar.gz -L https://github.com/baxpr/roi-extract/archive/refs/tags/v2.7.0.tar.gz &&
+    curl -o roi-extract.tar.gz -L https://github.com/baxpr/roi-extract/archive/refs/tags/v2.8.0.tar.gz &&
     tar -zxf roi-extract.tar.gz &&
     mv roi-extract-* roi-extract &&
     export PATH=/OUTPUTS/roi-extract/src:\$PATH &&
