@@ -24,7 +24,7 @@ sesdir=$(ls -d "${fmriprep_dir}"/"${sub}"/ses-*)
 ses=$(basename "${sesdir}")
 
 # Find MNI space T1 (ROIs should be aligned with it)
-t1=$(ls "${fmriprep_dir}/${sub}/${ses}/anat/${sub}_${ses}__space-MNI152NLin2009cAsym_desc-preproc_T1w.nii.gz")
+t1=$(ls "${fmriprep_dir}/${sub}/${ses}/anat/${sub}_${ses}_space-MNI152NLin2009cAsym_desc-preproc_T1w.nii.gz")
 
 # PDF showing T1, ROIs, and image in register
 IFS=$'\n' coms=($(fslstats -K rois rois -c))
