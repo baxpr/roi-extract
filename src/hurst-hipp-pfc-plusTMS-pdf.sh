@@ -27,7 +27,7 @@ ses=$(basename "${sesdir}")
 t1=$(ls "${fmriprep_dir}/${sub}/${ses}/anat/${sub}_${ses}_space-MNI152NLin2009cAsym_desc-preproc_T1w.nii.gz")
 
 # PDF showing T1, ROIs, and image in register
-IFS=$'\n' coms=($(fslstats -K rois rois -c))
+IFS=$'\n' coms=($(fslstats -K roisMNIplusTMS roisMNIplusTMS -c))
 
 IFS=' ' loc=(${coms[0]})
 fsleyes render -of t1_1.png \
