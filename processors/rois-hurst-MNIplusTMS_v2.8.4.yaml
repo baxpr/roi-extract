@@ -25,8 +25,14 @@ inputs:
         inputs: scan_fmri,assr_fmriprep/scan_fmri
       - type: match
         inputs: scan_fmri,assr_hurst/scan_fmri
-
+      - type: match
+        inputs: scan_t1,assr_freesurfer/scan_t1
+        
     scans:
+
+      - name: scan_t1
+        types: t1
+        skip_unusable: True
 
       - name: scan_fmri
         types: rsfMRI
