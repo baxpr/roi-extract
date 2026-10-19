@@ -94,7 +94,7 @@ post:
   args: >-
     bash -c '
     export PATH=/OUTPUTS/roi-extract/src:\$PATH &&
-    xwrapper.sh pfc-plusTMS-pdf.sh
+    xwrapper.sh hipp-pfc-plusTMS-pdf.sh
     --fmriprep_dir /INPUTS/fmriprep/fmriprepBIDS
     --img_niigz /INPUTS/fALFFnorm.nii.gz
     --img_label fALFFnorm
